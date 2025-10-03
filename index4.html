@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎉 A Surprise Just For You! 🎉</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    colors: {
+                        'primary': "#ff6347", /* Tomato Red */
+                        'secondary': "#ffc0cb", /* Pink */
+                        'accent': "#ffd700", /* Gold */
+                        'dark-text': '#1f2937',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 30px rgba(255, 99, 71, 0.5), 0 0 15px rgba(255, 192, 203, 0.4)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        /* ------------------- */
+        /* Custom CSS & Keyframes */
+        /* ------------------- */
+
+        body {
+            /* Vibrant background gradient */
+            background: linear-gradient(135deg, #fce4ec 0%, #ffc0cb 100%); 
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Ensures vertical centering */
+            min-height: 100vh;
+            padding: 20px 10px; /* Reduced side padding slightly for tiny screens */
+        }
+
+        /* Animation for content sliding in */
+        @keyframes slideInFade {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .enter-animation {
+            animation: slideInFade 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Pulsating animation for the opener button */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 99, 71, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 99, 71, 0); }
+            100% { transform: scale(1); }
+        }
+
+        #openerButton {
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            background-image: linear-gradient(45deg, #ff6347, #ff4500);
+            border: none;
+            animation: pulse 2s infinite; /* Apply pulse animation */
+        }
+        #openerButton:hover {
+            box-shadow: 0 15px 20px rgba(255, 99, 71, 0.5);
+            transform: translateY(-5px) scale(1.02);
+            animation: none; /* Stop pulsing on hover */
+        }
+
+        /* Custom Candle Flame effect */
+        @keyframes sway {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(3px); }
+        }
+        .flame {
+            font-size: 2.5rem; /* Larger flame */
+            color: #ffd700;
+            display: inline-block;
+            animation: sway 0.5s ease-in-out infinite alternate;
+        }
+
+        .cake-cut-button {
+            transition: transform 0.1s;
+        }
+        .cake-cut-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+    <!-- JSConfetti Library for the 'Bluster/Crackers' Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+</head>
+<body class="font-sans">
+
+    <!-- The Main Container Card -->
+    <!-- The padding is now adjusted to p-6/p-10 and max-w-lg/w-full ensures mobile responsiveness -->
+    <div id="main-card" 
+         class="w-full max-w-lg bg-white rounded-3xl p-6 md:p-10 shadow-glow text-dark-text">
+
+        <!-- Initial Surprise Button -->
+        <div id="initial-screen" class="flex justify-center items-center h-full min-h-[300px]">
+            <button id="openerButton"
+                    class="text-white font-black text-3xl py-5 px-10 rounded-full cursor-pointer"
+                    aria-label="Click here for a birthday surprise">
+                Tap for a HUGE Surprise! 🎁
+            </button>
+        </div>
+
+        <!-- Hidden Birthday Content (The Surprise) -->
+        <div id="surprise-content" class="hidden text-center">
+
+            <!-- Title & Photo/Cake Section -->
+            <!-- Adjusted H1 size for better mobile readability (default text-5xl is large enough) -->
+            <h1 class="text-4xl sm:text-5xl font-black text-primary mb-4">
+                🥳 HAPPY BIRTHDAY! 🥳
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-700 mb-6 font-semibold">
+                To my closest one, this day is all about you!
+            </p>
+
+            <div id="photo-container" class="mb-8 p-4 bg-secondary/20 rounded-xl border-4 border-accent/70 relative">
+                <!--  IMPORTANT: Please replace the 'src="Roni.jpeg"' below with your image's PUBLIC URL! -->
+                <img src="image/Roni.jpeg"
+                     alt="The Birthday Person"
+                     class="w-full h-auto rounded-lg object-cover shadow-2xl mx-auto border-4 border-white"
+                     onerror="this.src='https://placehold.co/400x400/ffc0cb/000?text=Error+Loading+Image';"
+                >
+                
+                <!-- Candle and Blow Out Section -->
+                <div id="candle-area" class="mt-4 flex flex-col items-center">
+                    <p class="text-xl font-bold text-dark-text mb-2">
+                        Make a wish and blow out the virtual candle!
+                    </p>
+                    <span id="candle-flame" class="flame">🕯️</span>
+                    <button id="blowOutButton"
+                            class="mt-3 bg-red-500 text-white font-bold py-2 px-6 rounded-full shadow-md hover:bg-red-600 transition duration-150">
+                        💨 BLOW OUT! 💨
+                    </button>
+                </div>
+            </div>
+
+            <!-- Virtual Cake Cutting Section (Initially disabled) -->
+            <div id="cake-cutter" class="mt-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 flex items-center justify-center">
+                    <span class="mr-2">🎂</span> Now, cut the virtual cake!
+                </h2>
+
+                <button id="cutCakeButton"
+                        class="cake-cut-button bg-gray-400 text-gray-900 font-extrabold text-xl py-3 px-8 rounded-full shadow-md cursor-not-allowed"
+                        disabled>
+                    Slice! (Blow out candle first)
+                </button>
+
+                <div id="cake-message" class="mt-4 p-3 bg-green-100 text-green-800 rounded-lg hidden font-medium text-lg border border-green-300">
+                    <p>🎉 **The cake is cut!** Wishing you a year full of happiness, success, and the sweetest moments. Love you! 🎉</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Initialize Firebase variables (required boilerplate)
+        const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+        const firebaseConfig = typeof __firebase_config !== "undefined" ? JSON.parse(__firebase_config) : {};
+        const authToken = typeof __initial_auth_token !== "undefined" ? __initial_auth_token : null;
+
+        // ----------------------------------------------------
+        // JAVASCRIPT LOGIC FOR THE SURPRISE SEQUENCE
+        // ----------------------------------------------------
+
+        const openerButton = document.getElementById("openerButton");
+        const initialScreen = document.getElementById("initial-screen");
+        const surpriseContent = document.getElementById("surprise-content");
+        const blowOutButton = document.getElementById("blowOutButton");
+        const candleFlame = document.getElementById("candle-flame");
+        const cutCakeButton = document.getElementById("cutCakeButton");
+        const cakeMessage = document.getElementById("cake-message");
+
+        // Initialize the confetti object
+        const jsConfetti = new JSConfetti();
+
+        /**
+         * Step 1: Handle the initial button click (The Big Reveal).
+         */
+        openerButton.addEventListener("click", handleSurprise);
+
+        function handleSurprise() {
+            // 1. Hide the initial button
+            initialScreen.classList.add("hidden");
+
+            // 2. Trigger the main 'Bluster/Crackers' effect
+            jsConfetti
+              .addConfetti({
+                confettiColors: ["#ffc0cb", "#ffd700", "#ff6347", "#ffffff", "#00ced1"],
+                confettiRadius: 8,
+                confettiNumber: 600,
+              })
+              .then(() => {
+                // Secondary burst of celebratory emojis
+                jsConfetti.addConfetti({
+                  emojis: ["🎂", "🎁", "🥳", "🎈", "💖"],
+                  emojiSize: 35,
+                  confettiNumber: 70,
+                });
+              });
+
+            // 3. Show the main content and trigger the CSS slide-in animation
+            surpriseContent.classList.remove("hidden");
+            surpriseContent.classList.add("enter-animation");
+
+            // Optional: Disable the button
+            openerButton.disabled = true;
+        }
+
+        /**
+         * Step 2: Handle the virtual candle blowing interaction.
+         */
+        blowOutButton.addEventListener("click", blowOutCandle);
+
+        function blowOutCandle() {
+            // 1. Hide the candle flame and the blow-out button
+            candleFlame.textContent = '💨'; // Change to a puff of smoke emoji
+            blowOutButton.classList.add('hidden');
+
+            // 2. Enable the Cake Cutting button
+            cutCakeButton.disabled = false;
+            cutCakeButton.textContent = 'Slice! (Click to Cut)';
+            cutCakeButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            cutCakeButton.classList.add('bg-accent', 'hover:bg-yellow-400');
+            
+            // Re-trigger a small emoji burst to signify the wish was made
+            jsConfetti.addConfetti({
+                emojis: ['✨', '💭', '🙏'],
+                emojiSize: 20,
+                confettiNumber: 20,
+            });
+        }
+
+        /**
+         * Step 3: Handle the virtual cake cutting interaction.
+         */
+        cutCakeButton.addEventListener("click", cutCake);
+
+        function cutCake() {
+            // Check if the button is actually enabled (candle blown out)
+            if (cutCakeButton.disabled) return;
+
+            // Change button appearance to show it's "used"
+            cutCakeButton.disabled = true;
+            cutCakeButton.textContent = "Cut!";
+            cutCakeButton.classList.remove('bg-accent', 'hover:bg-yellow-400');
+            cutCakeButton.classList.add("bg-gray-400", "cursor-not-allowed");
+
+            // Show the congratulatory message
+            cakeMessage.classList.remove("hidden");
+
+            // Re-trigger a final, huge confetti burst for the grand finale
+            jsConfetti.addConfetti({
+                confettiColors: ["#ff6347", "#00ced1"],
+                confettiRadius: 10,
+                confettiNumber: 800
+            });
+        }
+    </script>
+</body>
+</html>
